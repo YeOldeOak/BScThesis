@@ -17,7 +17,7 @@ testQuery = ('playing', 'runescape', 'on', 'weekends')
 # second query calculates bm25 scoring of each document based on posting data and term appearance
     # bm25 algorithm is normalized to the length of documents, in the 3rd line of the SUM section
 scoreBM25 = f"""WITH queryterms AS (
-    SELECT termid
+    SELECT termid, df
     FROM dict
     WHERE term IN {testQuery}
 ),
@@ -25,14 +25,13 @@ docscores AS (
     SELECT 
         p.docid,
         SUM(
-            LOG((SELECT num_docs FROM stats) / (1 + td.df)) * 
+            LOG((SELECT num_docs FROM stats) / (1 + q.df)) * 
             (p.tf * (1.5 + 1)) /
             (p.tf + 1.5 * (1 - 0.75 + 0.75 * (d.len / (SELECT avgdl FROM stats))))
         ) AS bm25score
     FROM 
         postings p
     JOIN queryterms q ON p.termid = q.termid
-    JOIN dict td ON p.termid = td.termid
     JOIN docs d ON p.docid = d.docid
     GROUP BY p.docid
 )
