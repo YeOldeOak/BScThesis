@@ -25,7 +25,7 @@ def column_creation(connection, table_name, column_name):
     if len(result) == 0:
         connection.execute(f"""
                 ALTER TABLE {table_name}
-                ADD COLUMN {column_name}
+                ADD COLUMN {column_name} INTEGER;
                 """)
 
 
