@@ -24,15 +24,29 @@ Checkout the DuckDB repo, switch to `feature` and `DUCKDB_EXTENSIONS=httpfs make
 
 ## Using DuckDB
 
-Original queries for dictionary and ranking by BM25:
+Activate VPN and create the correct `s3-private-init.sql` file with your secrets.
+
+### Experiments
+
+We create a database file (`todd.db`) and the view definitions according to Todd's files in S3:
 
     duckdb --init init.sql todd.db < todd-schema.sql
+
+Run the original queries for dictionary and ranking by BM25 as follows:
+
     duckdb --init init.sql todd.db < todd-queries.sql
 
-When using a database file (`todd.db`), the first command defining the views is only needed once.
-
-Experiments to trigger different physical designs:
+Experiments by Arjen intended to trigger different physical query plans:
 
     duckdb --init init.sql todd.db < schema.sql
     duckdb --init init.sql todd.db < queries.sql
+
+### Analysis
+
+Any query can be prefixed with `EXPLAIN ANALYZE` to get more detailed info regarding query execution.
+
+Another useful debug command details the Parquet configuration:
+
+    FROM parquet_file_metadata('s3://todd/dictionary.parquet');
+
 
