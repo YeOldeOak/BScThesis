@@ -1,13 +1,3 @@
-CREATE OR REPLACE VIEW dict AS FROM read_parquet('s3://todd/dictionary.parquet');
-
--- Normal query term selection
-SELECT termid, df FROM dict WHERE term IN ( 'radboud', 'university');
-
--- My version of the dictionary Parquet file:
-COPY (SELECT term, termid, df, cr(term) AS crange FROM dict ORDER BY crange) 
-     TO 's3://test/pdict.parquet' (FORMAT PARQUET, OVERWRITE_OR_IGNORE);
-CREATE OR REPLACE VIEW dict AS FROM read_parquet('s3://test/pdict.parquet');
-
 -- Using extra constraints on first character
 SELECT termid, df FROM dict WHERE 
    (term = 'radboud') AND (crange=cr('radboud')) 
