@@ -58,7 +58,6 @@ CREATE OR REPLACE MACRO p(termid) AS (termid >> 17)::TINYINT;
 COPY (
 	SELECT p(termid) AS thash, termid, docid, tf FROM postings
 ) TO 's3://ows/ciff2/postings.parquet' (FORMAT PARQUET, PARTITION_BY (thash), OVERWRITE_OR_IGNORE);
-CREATE OR REPLACE VIEW ciff2.postings AS FROM read_parquet('s3://ows/ciff2/postings.parquet');
 CREATE OR REPLACE VIEW ciff2.postings AS FROM read_parquet('s3://ows/ciff2/postings.parquet/*/*.parquet', 
 	hive_partitioning=true, hive_types={'thash': TINYINT});
 
