@@ -34,7 +34,8 @@ docscores AS (
 SELECT ds.docid, ds.bm25score, di.name
 FROM docscores ds
 JOIN docs di ON ds.docid = di.docid
-ORDER BY ds.bm25score DESC;
+ORDER BY ds.bm25score DESC
+LIMIT 10;
 
 --  JOIN queryterms q ON p.termid = q.termid AND p.thash = q.termid % 100 
 
