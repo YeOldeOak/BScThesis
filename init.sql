@@ -8,4 +8,3 @@
 -- Query processing config
 SET THREADS TO 4;
 SET enable_progress_bar TO false;
-
