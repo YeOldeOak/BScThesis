@@ -20,7 +20,7 @@ create or replace temporary table tdupdoc as
 -- Dictionary with corrected df values
 create or replace table fixedciff.dict as 
   select termid,term,any_value(df) as df from (
-    select d.termid, tdupdoc.termid, d.term, (df - coalesce(deltadf, 0)) as df 
+    select d.termid, d.term, (df - coalesce(deltadf, 0)) as df 
     from ows.dict d left outer join tdupdoc on (d.termid = tdupdoc.termid) ) 
   group by termid,term order by termid;
 
