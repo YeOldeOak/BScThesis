@@ -1,3 +1,5 @@
+USE rciff2;
+
 -- Using extra constraints on first character
 SELECT termid, df FROM dict WHERE 
    (term = 'radboud') AND (crange=ows.cr('radboud')) 
