@@ -1,7 +1,5 @@
--- Todd's BM25 ranking
 --
--- manually rewriting for the correct thash values; need to be fixed when creating postings
--- JOIN queryterms q ON p.termid = q.termid AND p.thash = q.termid % 100 
+-- BM25 ranking
 --
 
 USE rciff2;
