@@ -12,11 +12,11 @@
 USE ows;
 
 -- Store the views on S3 parquet files in its own schema
-CREATE SCHEMA ciff2;
+CREATE SCHEMA IF NOT EXISTS rciff2;
 
 -- Statistics
 COPY (FROM stats) TO 's3://ows/ciff2/stats.parquet' (FORMAT PARQUET, OVERWRITE_OR_IGNORE);
-CREATE OR REPLACE VIEW ciff2.stats as FROM read_parquet('s3://ows/ciff2/stats.parquet');
+CREATE OR REPLACE VIEW rciff2.stats as FROM read_parquet('s3://ows/ciff2/stats.parquet');
 
 -- Create ranges of strings based on their first character:
 CREATE OR REPLACE MACRO cr(term) AS ascii(term[1]) // 10;
@@ -24,12 +24,12 @@ CREATE OR REPLACE MACRO cr(term) AS ascii(term[1]) // 10;
 -- Create the Dictionary Parquet file using macro cr for partitioning:
 COPY (SELECT term, termid, df, cr(term) AS crange FROM dict ORDER BY crange, termid) 
      TO 's3://ows/ciff2/dict.parquet' (FORMAT PARQUET, OVERWRITE_OR_IGNORE);
-CREATE OR REPLACE VIEW ciff2.dict AS FROM read_parquet('s3://ows/ciff2/dict.parquet');
+CREATE OR REPLACE VIEW rciff2.dict AS FROM read_parquet('s3://ows/ciff2/dict.parquet');
 
 -- The Docs Parquet file
 -- Relatively small at about 115MB, it does not benefit much from Hive partitioning
 COPY (FROM docs) TO 's3://ows/ciff2/docs.parquet' (FORMAT PARQUET, OVERWRITE_OR_IGNORE);
-CREATE OR REPLACE VIEW ciff2.docs AS FROM read_parquet('s3://ows/ciff2/docs.parquet');
+CREATE OR REPLACE VIEW rciff2.docs AS FROM read_parquet('s3://ows/ciff2/docs.parquet');
 
 -- Postings
 --
@@ -56,9 +56,9 @@ CREATE OR REPLACE MACRO p(termid) AS (termid >> 17)::TINYINT;
 
 -- Postings Parquet file, hive paritioned on termid hash
 COPY (
-	SELECT p(termid) AS thash, termid, docid, tf FROM postings
+	SELECT p(termid) AS thash, termid, docid, tf FROM owsdd.postings
 ) TO 's3://ows/ciff2/postings.parquet' (FORMAT PARQUET, PARTITION_BY (thash), OVERWRITE_OR_IGNORE);
-CREATE OR REPLACE VIEW ciff2.postings AS FROM read_parquet('s3://ows/ciff2/postings.parquet/*/*.parquet', 
+CREATE OR REPLACE VIEW rciff2.postings AS FROM read_parquet('s3://ows/ciff2/postings.parquet/*/*.parquet', 
 	hive_partitioning=true, hive_types={'thash': TINYINT});
 
 -- Physical details from the internal representation:
