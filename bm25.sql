@@ -4,12 +4,11 @@
 
 USE rciff2;
 
+CREATE OR REPLACE TEMPORARY TABLE query (qterm VARCHAR);
+INSERT INTO query VALUES ('radboud'), ('university');
+
 WITH queryterms AS (
-  SELECT termid, df FROM dict WHERE 
-    (term = 'radboud' AND crange = ows.cr('radboud'))
-  UNION
-  SELECT termid, df FROM dict WHERE 
-    (term = 'university' AND crange = ows.cr('university'))
+  SELECT termid, df FROM rciff2.dict JOIN query ON term = qterm
 ),
 docscores AS (
   SELECT 
@@ -28,5 +27,5 @@ JOIN docs di ON ds.docid = di.docid
 ORDER BY ds.bm25score DESC
 LIMIT 20;
 
-
+DROP TABLE query;
 
