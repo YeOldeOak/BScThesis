@@ -5,10 +5,10 @@ import duckdb
 
 
 # Create/open DuckDB database.
-con = duckdb.connect("./ciff.db")
+con = duckdb.connect("./index.db")
 
 # Copy the dict table from the database to an external parquet file
-con.execute("""COPY stats TO 'docStats.parquet' (FORMAT PARQUET)""")
+con.execute("""COPY ows.stats TO 'docStats.parquet' (FORMAT PARQUET)""")
 
 # cleanup
 con.close()
