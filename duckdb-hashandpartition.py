@@ -59,7 +59,7 @@ def hash_in_chunks(connection, table_name, id_column, chunk_size):
 
 
 # Create/open DuckDB database.
-con = duckdb.connect("./ciff.db")
+con = duckdb.connect("./index.db")
 
 # Add new column to postings table if it doesn't already exist, to store hash values.
 # Type is INT, as regardless of how big of a value hash gives us, we still mod.
@@ -72,12 +72,12 @@ column_creation(con, 'postings', 'thash')
 print("hash start")
 #con.execute("""UPDATE postings SET thash = termid % 100""")
 hash_chunk_size = 50000
-hash_in_chunks(con, 'postings', 'termid', hash_chunk_size)
+hash_in_chunks(con, 'owsdd.postings', 'termid', hash_chunk_size)
 print("hash finish")
 
 # Partition the data based on previously calculated values in chunks.
 print("partition start")
-con.execute("""COPY postings TO 'postings' (FORMAT PARQUET, PARTITION_BY thash)""")
+con.execute("""COPY owsdd.postings TO 'postings' (FORMAT PARQUET, PARTITION_BY thash)""")
 print("partition finish")
 
 # Cleanup.
