@@ -38,13 +38,15 @@ def run_queries(queries):
             SELECT term, termid, df, crange
             FROM dict
             WHERE term IN ({", ".join(f"'{term}'" for term in query)})
+            AND crange IN ({", ".join(f"cr('{term}')" for term in query)})
         )
         """
 
         # Extract termids of query terms in current query into a Python list
         termids_result = con.execute(f"""
         SELECT termid FROM dict
-        WHERE term IN ({", ".join(f"'{term}'" for term in query)});
+        WHERE term IN ({", ".join(f"'{term}'" for term in query)})
+        AND crange IN ({", ".join(f"cr('{term}')" for term in query)});
         """).fetchall()
 
         # Query terms without an id will return nothing in the lines above
