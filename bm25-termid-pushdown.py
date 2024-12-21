@@ -28,25 +28,6 @@ data = pd.read_csv(f'sample_queries{queryamount}.csv', header=None)
 queries = data.iloc[1:, 0].apply(lambda query: [term.replace("'", "") for term in query.split()]).tolist()
 
 
-def sum_read_parquet_times(json_data):
-    # Base case: If the JSON doesn't have "children", return 0
-    if "children" not in json_data:
-        return 0
-
-    # Initialize total time
-    total_time = 0
-
-    # Check if the current node is a "READ_PARQUET" operator
-    if json_data.get("name") == "READ_PARQUET ":
-        total_time += json_data.get("timing", 0)
-
-    # Recursively process all children nodes
-    for child in json_data.get("children", []):
-        total_time += sum_read_parquet_times(child)
-
-    return total_time
-
-
 # Main function for building CTEs and running BM25 queries
 def run_queries(queries):
     skipped_queries = 0
@@ -57,7 +38,7 @@ def run_queries(queries):
         termids_result = con.execute(f"""
         SELECT termid FROM dict
         WHERE term IN ({", ".join(f"'{term}'" for term in query)})
-        AND crange in ({", ".join(f"cr('{term}')" for term in query)});
+        AND crange IN ({", ".join(f"cr('{term}')" for term in query)});
         """).fetchall()
 
         # Query terms without an id will return nothing in the lines above
