@@ -4,6 +4,16 @@
 
     git clone git@github.com:YeOldeOak/BScThesis
 
+## Using Python
+
+Latest versions used in thesis are:
+* local: `bm25-termlists-local.py`
+* remote: `bm25-termlists.py`
+
+Replace DuckDB views in the code to your setup.
+Replace sercet key in code for your S3 access.
+Ensure Queries are generated via `extractQueries.py`
+
 ## Installing DuckDB
 
 ### v1.1.3 bugfix release
