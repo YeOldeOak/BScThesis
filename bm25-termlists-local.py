@@ -15,7 +15,7 @@ con.execute("CREATE OR REPLACE VIEW stats AS SELECT * FROM index.ows.stats;")
 
 # Random states for 10 queries was 37, for 100 queries it was 23, for 500 queries it was 66, for 50 it was 17
 # Load random sample of ORCAS queries to a parsable format
-queryamount = 500
+queryamount = 50
 data = pd.read_csv(f'sample_queries{queryamount}.csv', header=None)
 queries = data.iloc[1:, 0].apply(lambda query: [term.replace("'", "''") for term in query.split()]).tolist()
 
