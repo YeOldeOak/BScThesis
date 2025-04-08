@@ -1,5 +1,5 @@
 -- S3 secrets Redbad
-.read s3-init-private.sql
+.read /home/arjen/doc/OWS.EU/todd-bsc/s3-init-private.sql
 
 -- CLI settings
 .timer on
